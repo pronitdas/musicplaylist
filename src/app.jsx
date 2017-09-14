@@ -13,32 +13,27 @@ class App extends Component {
         };
     }
 
-    getData(){
-        console.log("this is called");
+    getData = () => {
         const proxyurl = "https://cors-anywhere.herokuapp.com/";
         fetch(proxyurl+"http://www.bbc.co.uk/radio1/playlist.json")
             .then(d => d.json())
             .then(data => {
-                var play = [];
-                var playLists = Object.keys(data['playlist']);
+                let play = [];
+                let playLists = Object.keys(data['playlist']);
                 _.forEach(playLists, (d)=>{
-                    console.log("forown", d);
-                    play.push(<Playlist playlist={data['playlist'][d]} name={d} key={d} />);
+                    let title = d.length>1 && _.startCase(d);
+                    play.push(<Playlist playlist={data['playlist'][d]} name={title} key={d} />);
                 });
                 this.setState({playlist:play});
             })
             .catch((err) => {
                 console.log("Failed to load data: " + err);
             });
-    }
-
-    componentDidUpdate() {
-        setTimeout(console.log("state",this.state), 2000);
     };
 
     componentDidMount(){
         this.getData();
-        setInterval(()=> this.getData, 60000);
+        setInterval(this.getData, 60000);
     }
 
     render(){
@@ -46,19 +41,13 @@ class App extends Component {
 
         return (
             <div>
-
-            <div className="App-title">
-                Music Playlist
+                <div className="App-title">
+                    Music Playlist
+                </div>
+                <div>
+                    {playlist}
+                </div>
             </div>
-
-            <div>
-                {playlist &&
-                playlist
-                }
-            </div>
-            </div>
-
-
         )
     }
 }
